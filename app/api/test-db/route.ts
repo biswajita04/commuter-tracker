@@ -3,17 +3,14 @@ import { query } from '@/lib/db';
 
 export async function GET() {
   try {
-    const result = await query('SELECT NOW() as current_time');
-    return NextResponse.json({ 
-      success: true, 
-      message: 'Successfully connected to Aiven PostgreSQL!', 
-      time: result.rows[0].current_time 
-    }, { status: 200 });
-  } catch (error: any) {
+    const result = await query('SELECT NOW()');
+    return NextResponse.json({ success: true, time: result.rows[0] });
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
     console.error('Database connection error:', error);
-    return NextResponse.json({ 
-      success: false, 
-      error: error.message 
-    }, { status: 500 });
+    return NextResponse.json(
+      { success: false, error: errorMessage },
+      { status: 500 }
+    );
   }
 }
